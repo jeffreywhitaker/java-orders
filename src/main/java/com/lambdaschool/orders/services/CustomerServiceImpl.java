@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service(value ="customerService")
@@ -55,6 +56,16 @@ public class CustomerServiceImpl implements CustomerService
     @Override
     public Customer update(Customer customer, long id)
     {
+        // Does the customer exist already?
+        Optional<Customer> optionalUpdateCustomer = custrepos.findById(id);
+        // If not, abort
+        if (optionalUpdateCustomer.isEmpty())
+        {
+            return null;
+        }
+        // Take the updated customer object and slap the id on so that custrepos knows which entry to update
+        customer.setCustcode(id);
+        // update the customer
         return custrepos.save(customer);
     }
 
